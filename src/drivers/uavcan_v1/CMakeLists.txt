@@ -40,15 +40,10 @@ px4_add_git_submodule(TARGET git_public_regulated_data_types PATH ${DSDL_DIR})
 find_program(NNVG_PATH nnvg)
 if(NNVG_PATH)
 	execute_process(COMMAND ${NNVG_PATH} --outdir ${CMAKE_CURRENT_BINARY_DIR}/dsdlc_generated --target-language c -I ${DSDL_DIR}/uavcan ${DSDL_DIR}/reg)    
-	execute_process(COMMAND ${NNVG_PATH} --outdir ${CMAKE_CURRENT_BINARY_DIR}/dsdlc_generated --target-language c -I ${DSDL_DIR}/uavcan ${DSDL_DIR}/legacy)
 	execute_process(COMMAND ${NNVG_PATH} --outdir ${CMAKE_CURRENT_BINARY_DIR}/dsdlc_generated --target-language c ${DSDL_DIR}/uavcan)
 else()
 	message(FATAL_ERROR "UAVCAN Nunavut nnvg not found")
 endif()
-
-add_definitions(
-	-DCANARD_DSDL_CONFIG_LITTLE_ENDIAN=1
-)
 
 set(SRCS)
 if(${PX4_PLATFORM} MATCHES "nuttx")
@@ -81,8 +76,6 @@ px4_add_module(
 		${SRCS}
 		o1heap/o1heap.c
 		o1heap/o1heap.h
-		${LIBCANARD_DIR}/libcanard/canard_dsdl.c
-		${LIBCANARD_DIR}/libcanard/canard_dsdl.h
 		${LIBCANARD_DIR}/libcanard/canard.c
 		${LIBCANARD_DIR}/libcanard/canard.h
 	DEPENDS

@@ -77,16 +77,17 @@
 class UavcanNode : public ModuleParams, public px4::ScheduledWorkItem
 {
 	/*
-	 * This memory is reserved for uavcan to use as over flow for message
-	 * Coming from multiple sources that my not be considered at development
-	 * time.
-	 *
-	 * The call to getNumFreeBlocks will tell how many blocks there are
-	 * free -and multiply it times getBlockSize to get the number of bytes
-	 *
-	 */
+	* This memory is allocated for the 01Heap allocator used by
+	* libcanard to store incoming/outcoming data
+	* Current size of 8192 bytes is arbitrary, should be optimized further
+	* when more nodes and messages are on the CAN bus
+	*/
 	static constexpr unsigned HeapSize = 8192;
 
+	/*
+	 * Base interval, has to be complemented with events from the CAN driver
+	 * and uORB topics sending data, to decrease response time.
+	 */
 	static constexpr unsigned ScheduleIntervalMs = 10;
 
 public:
@@ -142,7 +143,10 @@ private:
 	hrt_abstime _uavcan_node_heartbeat_last{0};
 	CanardTransferID _uavcan_node_heartbeat_transfer_id{0};
 
-	//Temporary hardcoded port IDs
+	/* Temporary hardcoded port IDs used by the register interface
+	* for demo purposes untill we have nice interface (QGC or latter)
+	* to configure the nodes
+	*/
 	const uint16_t bms_port_id = 1234;
 	const uint16_t gps_port_id = 1235;
 
